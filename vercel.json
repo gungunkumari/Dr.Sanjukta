@@ -1,30 +1,21 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
+      "source": "/portal",
+      "destination": "/portal.html"
     },
     {
-      "src": "public/**",
-      "use": "@vercel/static"
+      "source": "/appointment",
+      "destination": "/api/index.js"
     },
     {
-      "src": "portal.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/portal",
-      "dest": "/portal.html"
+      "source": "/appointments",
+      "destination": "/api/index.js"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/appointments/:path*",
+      "destination": "/api/index.js"
     }
   ]
 }

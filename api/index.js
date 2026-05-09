@@ -1,7 +1,6 @@
 // ============================================================
-// server.js — Dr. Sanjukta Banerjee — Backend
-// Saves appointments to appointments.json
-// Serves frontend + portal from same server
+// index.js — Dr. Sanjukta Banerjee — Backend
+// Vercel Serverless Version
 // ============================================================
 
 const express = require('express');
@@ -10,13 +9,16 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // ============================================================
 // FILE PATHS
 // ============================================================
 
-const APPOINTMENTS_FILE = path.join(__dirname, 'appointments.json');
+// IMPORTANT:
+// index.js is now inside /api
+// so we use ../ to reach root folder
+
+const APPOINTMENTS_FILE = path.join(__dirname, '../appointments.json');
 
 // ============================================================
 // MIDDLEWARE
@@ -29,17 +31,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve frontend files from "public" folder
-app.use(express.static(path.join(__dirname, 'public')));
+// ============================================================
+// SERVE STATIC FRONTEND
+// ============================================================
+
+// Serve everything inside /public
+
+app.use(express.static(path.join(__dirname, '../public')));
 
 // ============================================================
 // HELPER FUNCTIONS
 // ============================================================
 
 // Read appointments from JSON file
+
 function readAppointments() {
 
-  // Create file if it doesn't exist
+  // Create file if missing
   if (!fs.existsSync(APPOINTMENTS_FILE)) {
     fs.writeFileSync(APPOINTMENTS_FILE, JSON.stringify([]));
   }
@@ -54,8 +62,10 @@ function readAppointments() {
   }
 }
 
-// Save appointments to JSON file
+// Save appointments
+
 function saveAppointments(appointments) {
+
   fs.writeFileSync(
     APPOINTMENTS_FILE,
     JSON.stringify(appointments, null, 2)
@@ -71,7 +81,10 @@ function saveAppointments(appointments) {
 // ------------------------------------------------------------
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+  res.sendFile(
+    path.join(__dirname, '../public/index.html')
+  );
 });
 
 // ------------------------------------------------------------
@@ -79,7 +92,10 @@ app.get('/', (req, res) => {
 // ------------------------------------------------------------
 
 app.get('/portal', (req, res) => {
-  res.sendFile(path.join(__dirname, 'portal.html'));
+
+  res.sendFile(
+    path.join(__dirname, '../portal.html')
+  );
 });
 
 // ============================================================
@@ -88,14 +104,13 @@ app.get('/portal', (req, res) => {
 
 // ------------------------------------------------------------
 // POST /appointment
-// Save new appointment
 // ------------------------------------------------------------
 
 app.post('/appointment', (req, res) => {
 
   const { name, phone, email, message } = req.body;
 
-  // Validate required fields
+  // Validation
   if (!name || !phone || !email) {
 
     return res.status(400).json({
@@ -135,13 +150,13 @@ app.post('/appointment', (req, res) => {
   // Read existing appointments
   const appointments = readAppointments();
 
-  // Add newest appointment at top
+  // Add newest first
   appointments.unshift(newAppointment);
 
-  // Save updated appointments
+  // Save
   saveAppointments(appointments);
 
-  console.log(`✅ New appointment saved: ${name} (${email})`);
+  console.log(`✅ New appointment saved: ${name}`);
 
   return res.status(200).json({
     success: true,
@@ -151,7 +166,6 @@ app.post('/appointment', (req, res) => {
 
 // ------------------------------------------------------------
 // GET /appointments
-// Get all appointments
 // ------------------------------------------------------------
 
 app.get('/appointments', (req, res) => {
@@ -166,7 +180,6 @@ app.get('/appointments', (req, res) => {
 
 // ------------------------------------------------------------
 // PATCH /appointments/:id
-// Update appointment status
 // ------------------------------------------------------------
 
 app.patch('/appointments/:id', (req, res) => {
@@ -191,7 +204,7 @@ app.patch('/appointments/:id', (req, res) => {
 
   saveAppointments(appointments);
 
-  console.log(`✅ Appointment ${id} updated to ${status}`);
+  console.log(`✅ Appointment ${id} updated`);
 
   res.json({
     success: true,
@@ -201,7 +214,6 @@ app.patch('/appointments/:id', (req, res) => {
 
 // ------------------------------------------------------------
 // DELETE /appointments/:id
-// Delete appointment
 // ------------------------------------------------------------
 
 app.delete('/appointments/:id', (req, res) => {
@@ -223,22 +235,7 @@ app.delete('/appointments/:id', (req, res) => {
 });
 
 // ============================================================
-// START SERVER
+// EXPORT APP FOR VERCEL
 // ============================================================
 
-//app.listen(PORT, '0.0.0.0', () => {
-
-//  console.log('\n======================================');
-//  console.log('✅ SERVER RUNNING SUCCESSFULLY');
-//  console.log('======================================\n');
-
-//  console.log(`🌐 Website:`);
-//  console.log(`http://localhost:${PORT}\n`);
-
-//  console.log(`🏥 Doctor Portal:`);
-//  console.log(`http://localhost:${PORT}/portal\n`);
-
- // console.log(`📋 API Endpoint:`);
-//  console.log(`http://localhost:${PORT}/appointment\n`);
-//});
 module.exports = app;
