@@ -484,7 +484,7 @@ async function loadAppointments(){
 
   try{
 
-    const response = await fetch('/appointments');
+    const response = await fetch('/api/appointments');
 
     if(!response.ok){
       throw new Error('Server error');
@@ -697,7 +697,7 @@ async function updateStatus(id,status){
 
   try{
 
-    const response = await fetch(`/appointments/${id}`,{
+    const response = await fetch(`/api/appointments/${id}`,{
 
       method:'PATCH',
 

@@ -421,7 +421,7 @@ async function submitForm() {
 
   try {
 
-    const res = await fetch('/appointment', {
+    const res = await fetch('/api/appointment', {
 
       method: 'POST',
 
