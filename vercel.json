@@ -1,21 +1,50 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/portal",
-      "destination": "/portal.html"
+      "src": "api/index.js",
+      "use": "@vercel/node"
     },
     {
-      "source": "/appointment",
-      "destination": "/api/index.js"
+      "src": "public/**/*",
+      "use": "@vercel/static"
     },
     {
-      "source": "/appointments",
-      "destination": "/api/index.js"
-    },
+      "src": "portal.html",
+      "use": "@vercel/static"
+    }
+  ],
+
+  "routes": [
     {
-      "source": "/appointments/:path*",
-      "destination": "/api/index.js"
+      "src": "/appointment",
+      "methods": ["POST"],
+      "dest": "/api/index.js"
+    },
+
+    {
+      "src": "/appointments",
+      "dest": "/api/index.js"
+    },
+
+    {
+      "src": "/appointments/(.*)",
+      "dest": "/api/index.js"
+    },
+
+    {
+      "src": "/portal",
+      "dest": "/portal.html"
+    },
+
+    {
+      "src": "^/$",
+      "dest": "/public/index.html"
+    },
+
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
