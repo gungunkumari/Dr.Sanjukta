@@ -735,7 +735,7 @@ async function deleteAppointment(id){
 
   try{
 
-    const response = await fetch(`/appointments/${id}`,{
+    const response = await fetch(`/api/appointments/${id}`,{
       method:'DELETE'
     });
 

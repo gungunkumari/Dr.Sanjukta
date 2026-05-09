@@ -20,7 +20,9 @@ const supabase = createClient(
 // ============================================================
 
 app.use(cors());
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 // ============================================================
@@ -30,28 +32,50 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // ============================================================
-// ROUTES
+// HOME ROUTE
 // ============================================================
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+
+  res.sendFile(
+    path.join(__dirname, '../public/index.html')
+  );
 });
 
+// ============================================================
+// PORTAL ROUTE
+// ============================================================
+
 app.get('/portal', (req, res) => {
-  res.sendFile(path.join(__dirname, '../portal.html'));
+
+  res.sendFile(
+    path.join(__dirname, '../portal.html')
+  );
+});
+
+// ============================================================
+// TEST ROUTE
+// ============================================================
+
+app.get('/api/test', (req, res) => {
+
+  res.json({
+    success: true,
+    message: 'Backend working'
+  });
 });
 
 // ============================================================
 // CREATE APPOINTMENT
 // ============================================================
 
-app.post('/appointment', async (req, res) => {
+app.post('/api/appointment', async (req, res) => {
 
   try {
 
     const { name, phone, email, message } = req.body;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('appointments')
       .insert([
         {
@@ -66,7 +90,9 @@ app.post('/appointment', async (req, res) => {
       ]);
 
     if (error) {
+
       console.error(error);
+
       return res.status(500).json({
         success: false,
         error: error.message
@@ -92,72 +118,117 @@ app.post('/appointment', async (req, res) => {
 // GET APPOINTMENTS
 // ============================================================
 
-app.get('/appointments', async (req, res) => {
+app.get('/api/appointments', async (req, res) => {
 
-  const { data, error } = await supabase
-    .from('appointments')
-    .select('*')
-    .order('id', { ascending: false });
+  try {
 
-  if (error) {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+    return res.json({
+      success: true,
+      appointments: data
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Server error'
     });
   }
-
-  res.json({
-    success: true,
-    appointments: data
-  });
 });
 
 // ============================================================
 // UPDATE STATUS
 // ============================================================
 
-app.patch('/appointments/:id', async (req, res) => {
+app.patch('/api/appointments/:id', async (req, res) => {
 
-  const { status } = req.body;
+  try {
 
-  const { error } = await supabase
-    .from('appointments')
-    .update({ status })
-    .eq('id', req.params.id);
+    const { status } = req.body;
 
-  if (error) {
+    const { error } = await supabase
+      .from('appointments')
+      .update({ status })
+      .eq('id', req.params.id);
+
+    if (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Server error'
     });
   }
-
-  res.json({
-    success: true
-  });
 });
 
 // ============================================================
 // DELETE APPOINTMENT
 // ============================================================
 
-app.delete('/appointments/:id', async (req, res) => {
+app.delete('/api/appointments/:id', async (req, res) => {
 
-  const { error } = await supabase
-    .from('appointments')
-    .delete()
-    .eq('id', req.params.id);
+  try {
 
-  if (error) {
+    const { error } = await supabase
+      .from('appointments')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Server error'
     });
   }
-
-  res.json({
-    success: true
-  });
 });
 
 // ============================================================
