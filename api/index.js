@@ -226,18 +226,19 @@ app.delete('/appointments/:id', (req, res) => {
 // START SERVER
 // ============================================================
 
-app.listen(PORT, '0.0.0.0', () => {
+//app.listen(PORT, '0.0.0.0', () => {
 
-  console.log('\n======================================');
-  console.log('✅ SERVER RUNNING SUCCESSFULLY');
-  console.log('======================================\n');
+//  console.log('\n======================================');
+//  console.log('✅ SERVER RUNNING SUCCESSFULLY');
+//  console.log('======================================\n');
 
-  console.log(`🌐 Website:`);
-  console.log(`http://localhost:${PORT}\n`);
+//  console.log(`🌐 Website:`);
+//  console.log(`http://localhost:${PORT}\n`);
 
-  console.log(`🏥 Doctor Portal:`);
-  console.log(`http://localhost:${PORT}/portal\n`);
+//  console.log(`🏥 Doctor Portal:`);
+//  console.log(`http://localhost:${PORT}/portal\n`);
 
-  console.log(`📋 API Endpoint:`);
-  console.log(`http://localhost:${PORT}/appointment\n`);
-});
+ // console.log(`📋 API Endpoint:`);
+//  console.log(`http://localhost:${PORT}/appointment\n`);
+//});
+module.exports = app;
