@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor's Portal — Appointments</title>
+
+  <style>
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    body{
+      font-family:'Segoe UI',sans-serif;
+      background:#f0f4f8;
+      color:#1a2624;
+    }
+
+    /* HEADER */
+
+    .header{
+      background:#2E8B57;
+      color:white;
+      padding:20px 32px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      box-shadow:0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .header h1{
+      font-size:22px;
+      font-weight:700;
+    }
+
+    .header p{
+      font-size:13px;
+      opacity:.85;
+      margin-top:2px;
+    }
+
+    .header-logo{
+      font-size:32px;
+    }
+
+    .current-time{
+      font-size:13px;
+      opacity:.85;
+      text-align:right;
+    }
+
+    /* STATS */
+
+    .stats-bar{
+      display:flex;
+      gap:20px;
+      padding:20px 32px;
+      background:white;
+      border-bottom:1px solid #e0ece5;
+      flex-wrap:wrap;
+    }
+
+    .stat-card{
+      background:#f7fbf8;
+      border:1.5px solid #e0ece5;
+      border-radius:12px;
+      padding:16px 24px;
+      text-align:center;
+      min-width:130px;
+    }
+
+    .number{
+      font-size:28px;
+      font-weight:700;
+      color:#2E8B57;
+    }
+
+    .label{
+      font-size:12px;
+      color:#7a908a;
+      margin-top:4px;
+    }
+
+    .pending .number{
+      color:#d97706;
+    }
+
+    .confirmed .number{
+      color:#2E8B57;
+    }
+
+    .cancelled .number{
+      color:#e53e3e;
+    }
+
+    /* CONTROLS */
+
+    .controls{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:20px 32px;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .search-box{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:white;
+      border:1.5px solid #e0ece5;
+      border-radius:10px;
+      padding:10px 16px;
+      width:280px;
+    }
+
+    .search-box input{
+      border:none;
+      outline:none;
+      font-size:14px;
+      width:100%;
+    }
+
+    .filter-btns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .filter-btn{
+      padding:9px 18px;
+      border-radius:8px;
+      border:1.5px solid #e0ece5;
+      background:white;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .filter-btn.active{
+      background:#2E8B57;
+      color:white;
+      border-color:#2E8B57;
+    }
+
+    .refresh-btn{
+      padding:9px 18px;
+      border:none;
+      border-radius:8px;
+      background:#e8f5ee;
+      color:#2E8B57;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    /* TABLE */
+
+    .table-wrap{
+      padding:0 32px 32px;
+      overflow-x:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 2px 16px rgba(0,0,0,0.06);
+    }
+
+    thead{
+      background:#2E8B57;
+      color:white;
+    }
+
+    th{
+      padding:14px 18px;
+      text-align:left;
+      font-size:13px;
+    }
+
+    td{
+      padding:14px 18px;
+      font-size:14px;
+      border-bottom:1px solid #f0f4f0;
+      vertical-align:middle;
+    }
+
+    .patient-name{
+      font-weight:600;
+    }
+
+    .patient-email{
+      font-size:12px;
+      color:#7a908a;
+      margin-top:2px;
+    }
+
+    /* STATUS */
+
+    .status-badge{
+      display:inline-block;
+      padding:4px 12px;
+      border-radius:100px;
+      font-size:12px;
+      font-weight:600;
+    }
+
+    .status-Pending{
+      background:#fef3c7;
+      color:#d97706;
+    }
+
+    .status-Confirmed{
+      background:#e8f5ee;
+      color:#2E8B57;
+    }
+
+    .status-Cancelled{
+      background:#fff5f5;
+      color:#e53e3e;
+    }
+
+    .status-Completed{
+      background:#e0f2fe;
+      color:#0369a1;
+    }
+
+    /* BUTTONS */
+
+    .action-btns{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .action-btns button{
+      padding:5px 12px;
+      border:none;
+      border-radius:6px;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .btn-confirm{
+      background:#e8f5ee;
+      color:#2E8B57;
+    }
+
+    .btn-complete{
+      background:#e0f2fe;
+      color:#0369a1;
+    }
+
+    .btn-cancel{
+      background:#fff5f5;
+      color:#e53e3e;
+    }
+
+    .btn-delete{
+      background:#f0f4f8;
+      color:#7a908a;
+    }
+
+    /* EMPTY */
+
+    .empty-state{
+      text-align:center;
+      padding:60px 20px;
+      color:#7a908a;
+    }
+
+    .empty-state .icon{
+      font-size:48px;
+      margin-bottom:16px;
+    }
+
+    /* TOAST */
+
+    .toast{
+      position:fixed;
+      bottom:24px;
+      right:24px;
+      background:#1a2624;
+      color:white;
+      padding:14px 22px;
+      border-radius:12px;
+      display:none;
+      z-index:1000;
+    }
+
+    .message-text{
+      max-width:200px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    @media(max-width:768px){
+
+      .header,
+      .controls,
+      .stats-bar{
+        padding:16px;
+      }
+
+      .table-wrap{
+        padding:0 16px 24px;
+      }
+
+      .search-box{
+        width:100%;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+  <div class="header-left">
+
+    <div class="header-logo">🏥</div>
+
+    <div>
+      <h1>Doctor's Portal</h1>
+      <p>Manage your appointments</p>
+    </div>
+
+  </div>
+
+  <div class="current-time" id="currentTime"></div>
+
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats-bar">
+
+  <div class="stat-card">
+    <div class="number" id="totalCount">0</div>
+    <div class="label">Total</div>
+  </div>
+
+  <div class="stat-card pending">
+    <div class="number" id="pendingCount">0</div>
+    <div class="label">Pending</div>
+  </div>
+
+  <div class="stat-card confirmed">
+    <div class="number" id="confirmedCount">0</div>
+    <div class="label">Confirmed</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="number" id="completedCount">0</div>
+    <div class="label">Completed</div>
+  </div>
+
+  <div class="stat-card cancelled">
+    <div class="number" id="cancelledCount">0</div>
+    <div class="label">Cancelled</div>
+  </div>
+
+</div>
+
+
+<!-- CONTROLS -->
+
+<div class="controls">
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+
+    <div class="search-box">
+
+      🔍
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by name, email, phone..."
+        oninput="filterAppointments()"
+      />
+
+    </div>
+
+    <div class="filter-btns">
+
+      <button class="filter-btn active" onclick="setFilter('All', this)">All</button>
+
+      <button class="filter-btn" onclick="setFilter('Pending', this)">Pending</button>
+
+      <button class="filter-btn" onclick="setFilter('Confirmed', this)">Confirmed</button>
+
+      <button class="filter-btn" onclick="setFilter('Completed', this)">Completed</button>
+
+      <button class="filter-btn" onclick="setFilter('Cancelled', this)">Cancelled</button>
+
+    </div>
+
+  </div>
+
+  <button class="refresh-btn" onclick="loadAppointments()">
+    🔄 Refresh
+  </button>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-wrap">
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>#</th>
+        <th>Patient</th>
+        <th>Phone</th>
+        <th>Message</th>
+        <th>Date & Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="appointmentsBody">
+
+      <tr>
+
+        <td colspan="7">
+
+          <div class="empty-state">
+            <div class="icon">⏳</div>
+            <h3>Loading appointments...</h3>
+          </div>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+let allAppointments = [];
+
+let currentFilter = 'All';
+
+
+// LOAD APPOINTMENTS
+
+async function loadAppointments(){
+
+  try{
+
+    const response = await fetch('/api/appointments');
+
+    if(!response.ok){
+      throw new Error('Server error');
+    }
+
+    let data = {};
+
+    try{
+      data = await response.json();
+    }
+    catch{
+      throw new Error('Invalid JSON');
+    }
+
+    allAppointments = data.appointments || [];
+
+    updateStats();
+
+    renderTable();
+
+  }
+
+  catch(err){
+
+    console.error(err);
+
+    document.getElementById('appointmentsBody').innerHTML = `
+      <tr>
+        <td colspan="7">
+
+          <div class="empty-state">
+
+            <div class="icon">❌</div>
+
+            <h3>Cannot connect to backend</h3>
+
+            <p>
+              Your Vercel API is not responding properly.
+            </p>
+
+          </div>
+
+        </td>
+      </tr>
+    `;
+  }
+}
+
+
+// UPDATE STATS
+
+function updateStats(){
+
+  document.getElementById('totalCount').textContent =
+    allAppointments.length;
+
+  document.getElementById('pendingCount').textContent =
+    allAppointments.filter(a => a.status === 'Pending').length;
+
+  document.getElementById('confirmedCount').textContent =
+    allAppointments.filter(a => a.status === 'Confirmed').length;
+
+  document.getElementById('completedCount').textContent =
+    allAppointments.filter(a => a.status === 'Completed').length;
+
+  document.getElementById('cancelledCount').textContent =
+    allAppointments.filter(a => a.status === 'Cancelled').length;
+}
+
+
+// RENDER TABLE
+
+function renderTable(){
+
+  const tbody = document.getElementById('appointmentsBody');
+
+  const search =
+    document.getElementById('searchInput')
+    .value
+    .toLowerCase();
+
+  let filtered = allAppointments;
+
+  if(currentFilter !== 'All'){
+    filtered =
+      filtered.filter(a => a.status === currentFilter);
+  }
+
+  if(search){
+
+    filtered = filtered.filter(a =>
+
+      a.name.toLowerCase().includes(search) ||
+
+      a.email.toLowerCase().includes(search) ||
+
+      a.phone.toLowerCase().includes(search)
+    );
+  }
+
+  if(filtered.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7">
+
+          <div class="empty-state">
+
+            <div class="icon">📭</div>
+
+            <h3>No appointments found</h3>
+
+          </div>
+
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((a,index)=>`
+
+    <tr>
+
+      <td>${index+1}</td>
+
+      <td>
+
+        <div class="patient-name">${a.name}</div>
+
+        <div class="patient-email">${a.email}</div>
+
+      </td>
+
+      <td>${a.phone}</td>
+
+      <td>
+        <div class="message-text">
+          ${a.message}
+        </div>
+      </td>
+
+      <td>
+        📅 ${a.date}<br>
+        🕐 ${a.time}
+      </td>
+
+      <td>
+        <span class="status-badge status-${a.status}">
+          ${a.status}
+        </span>
+      </td>
+
+      <td>
+
+        <div class="action-btns">
+
+          ${
+            a.status !== 'Confirmed'
+            ?
+            `<button class="btn-confirm"
+              onclick="updateStatus(${a.id},'Confirmed')">
+              ✅ Confirm
+            </button>`
+            : ''
+          }
+
+          ${
+            a.status !== 'Completed'
+            ?
+            `<button class="btn-complete"
+              onclick="updateStatus(${a.id},'Completed')">
+              🏁 Done
+            </button>`
+            : ''
+          }
+
+          ${
+            a.status !== 'Cancelled'
+            ?
+            `<button class="btn-cancel"
+              onclick="updateStatus(${a.id},'Cancelled')">
+              ❌ Cancel
+            </button>`
+            : ''
+          }
+
+          <button
+            class="btn-delete"
+            onclick="deleteAppointment(${a.id})">
+
+            🗑️
+
+          </button>
+
+        </div>
+
+      </td>
+
+    </tr>
+
+  `).join('');
+}
+
+
+// UPDATE STATUS
+
+async function updateStatus(id,status){
+
+  try{
+
+    const response = await fetch(`/api/appointments/${id}`,{
+
+      method:'PATCH',
+
+      headers:{
+        'Content-Type':'application/json'
+      },
+
+      body:JSON.stringify({status})
+    });
+
+    if(!response.ok){
+      throw new Error();
+    }
+
+    showToast(`✅ Updated to ${status}`);
+
+    loadAppointments();
+
+  }
+
+  catch{
+
+    showToast('❌ Failed to update');
+  }
+}
+
+
+// DELETE
+
+async function deleteAppointment(id){
+
+  if(!confirm('Delete appointment?')){
+    return;
+  }
+
+  try{
+
+    const response = await fetch(`/api/appointments/${id}`,{
+      method:'DELETE'
+    });
+
+    if(!response.ok){
+      throw new Error();
+    }
+
+    showToast('🗑️ Deleted');
+
+    loadAppointments();
+
+  }
+
+  catch{
+
+    showToast('❌ Delete failed');
+  }
+}
+
+
+// FILTER
+
+function setFilter(filter,btn){
+
+  currentFilter = filter;
+
+  document.querySelectorAll('.filter-btn')
+    .forEach(b => b.classList.remove('active'));
+
+  btn.classList.add('active');
+
+  renderTable();
+}
+
+function filterAppointments(){
+  renderTable();
+}
+
+
+// TOAST
+
+function showToast(message){
+
+  const toast = document.getElementById('toast');
+
+  toast.textContent = message;
+
+  toast.style.display = 'block';
+
+  setTimeout(()=>{
+    toast.style.display = 'none';
+  },3000);
+}
+
+
+// CLOCK
+
+function updateClock(){
+
+  const now = new Date();
+
+  document.getElementById('currentTime').innerHTML = `
+
+    📅 ${now.toLocaleDateString('en-IN',{
+      weekday:'long',
+      day:'2-digit',
+      month:'long',
+      year:'numeric'
+    })}
+
+    <br>
+
+    🕐 ${now.toLocaleTimeString('en-IN',{
+      hour:'2-digit',
+      minute:'2-digit',
+      second:'2-digit',
+      hour12:true
+    })}
+  `;
+}
+
+
+// AUTO REFRESH
+
+setInterval(loadAppointments,30000);
+
+setInterval(updateClock,1000);
+
+
+// INITIAL LOAD
+
+loadAppointments();
+
+updateClock();
+
+</script>
+
+</body>
+</html>
